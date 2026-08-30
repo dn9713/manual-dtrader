@@ -12,7 +12,7 @@
     "presets": [
         [
             "@babel/preset-env",
-s            {
+            {
                 "useBuiltIns": "usage",
                 "corejs": 3,
                 "targets": "> 0.5%, not dead, not ie 11"
@@ -34,4 +34,3 @@ s            {
         "@babel/plugin-transform-nullish-coalescing-operator"
     ]
 }
-
