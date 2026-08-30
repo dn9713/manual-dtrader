@@ -1,8 +1,6 @@
-const moment = require('moment');
-const isEmptyObject = require('@deriv/shared').isEmptyObject;
-const getPropertyValue = require('@deriv/shared').getPropertyValue;
-const getStaticHash = require('_common/utility').getStaticHash;
-const LocalStore = require('@deriv/shared').LocalStore;
+import moment from 'moment';
+import { isEmptyObject, getPropertyValue, LocalStore } from '@deriv/shared';
+import { getStaticHash } from '_common/utility';
 
 /*
  * Caches WS responses to reduce delay time and number of requests
@@ -11,15 +9,15 @@ const LocalStore = require('@deriv/shared').LocalStore;
  * 1. It caches only the response of those calls which determined in `config`
  * 2. It doesn't cache responses which returned error
  * 3. The value is requested by BinarySocket,
- *    if this returns a value according to the logic here, socket code take it as response
- *    but also triggers an async `send` request, to keep the cache updated for next time
+ * if this returns a value according to the logic here, socket code take it as response
+ * but also triggers an async `send` request, to keep the cache updated for next time
  * 4. Uses client's time to set and check for expiry, as the expire durations are not so long to need a more precise one
- *    (And doesn't worth to wait for the response of time call)
+ * (And doesn't worth to wait for the response of time call)
  * 5. Some responses should be cached by a particular value from request (e.g. contracts_for_frxAUDJPY)
- *    so there can be more than one value for a particular call
+ * so there can be more than one value for a particular call
  * 6. Clears the whole cache regardless their expire time on the following events:
- *    6.1. Client changes: login / logout / switch loginid
- *    6.2. Detect a new release (static hash changed)
+ * 6.1. Client changes: login / logout / switch loginid
+ * 6.2. Detect a new release (static hash changed)
  */
 const SocketCache = (() => {
     // keys are msg_type
@@ -30,8 +28,8 @@ const SocketCache = (() => {
         trading_times: { expire: 120 },
         // TODO: Enable statement and trade table caching once we have UI design for handling
         // transitions between cached table and newly added data to table
-        // statement             : { expire: 10 },
-        // profit_table          : { expire: 10 },
+        // statement : { expire: 10 },
+        // profit_table : { expire: 10 },
     };
 
     const storage_key = 'ws_cache';
@@ -87,7 +85,7 @@ const SocketCache = (() => {
             if (!data.length) {
                 is_empty_data = true;
             }
-        } else if (typeof response_data === 'object') {
+        } else if (typeof data === 'object' && data !== null) {
             if (!Object.keys(data).length) {
                 is_empty_data = true;
             }
@@ -177,4 +175,5 @@ const SocketCache = (() => {
     };
 })();
 
-module.exports = SocketCache;
+export default SocketCache;
+
