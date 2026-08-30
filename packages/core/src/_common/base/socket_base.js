@@ -1,7 +1,7 @@
-const DerivAPIBasic = require('@deriv/deriv-api/dist/DerivAPIBasic');
-const { getAccountType, cloneObject, State, getApiV4BaseUrl } = require('@deriv/shared');
-const SocketCache = require('./socket_cache');
-const APIMiddleware = require('./api_middleware');
+import DerivAPIBasic from '@deriv/deriv-api/dist/DerivAPIBasic';
+import { getAccountType, cloneObject, State, getApiV4BaseUrl } from '@deriv/shared';
+import SocketCache from './socket_cache';
+import APIMiddleware from './api_middleware';
 
 /*
  * An abstraction layer over native javascript WebSocket,
@@ -15,22 +15,17 @@ const BinarySocketBase = (() => {
     let is_disconnect_called = false;
     let is_connected_before = false;
     let is_switching_socket = false;
-    let reconnect_handlers = []; // Array to store multiple reconnection handlers
-    let reconnect_attempt_count = 0; // Track number of reconnect attempts
+    let reconnect_handlers = [];
+    let reconnect_attempt_count = 0;
 
-    // v4: WS URL is set by client-store after fetching an OTP from the REST API.
-    // null means unauthenticated — fall back to public endpoint built from brand.config.json.
-    // Evaluated lazily (not at module load time) so window.location is available.
     const getPublicWSUrl = () => {
-        const base = getApiV4BaseUrl(); // e.g. "https://api.derivws.com"
+        const base = getApiV4BaseUrl();
         return `${base.replace(/^https?:\/\//, 'wss://')}/trading/v1/options/ws/public`;
     };
     let configured_ws_url = null;
 
     const setWSUrl = url => {
         configured_ws_url = url;
-        // Switching to an authenticated URL — treat the next onOpen as an initial connection
-        // so setIsAuthorize(false) is called correctly regardless of prior public socket state.
         if (url) is_connected_before = false;
     };
 
@@ -105,17 +100,12 @@ const BinarySocketBase = (() => {
             is_disconnect_called = false;
             binary_socket = new WebSocket(getSocketUrl(session_id));
 
-            // Add error event listener for connection failures
             binary_socket.addEventListener('error', error_event => {
                 console.error('WebSocket error:', error_event);
-
-                // Increment reconnect attempt counter
                 reconnect_attempt_count++;
-
-                // Throw error after 3 reconnect attempts
                 if (reconnect_attempt_count >= 3 && typeof config.onConnectionError === 'function') {
                     config.onConnectionError(error_event);
-                    reconnect_attempt_count = 0; // Reset counter after throwing error
+                    reconnect_attempt_count = 0;
                 }
             });
 
@@ -128,27 +118,14 @@ const BinarySocketBase = (() => {
 
         deriv_api.onOpen().subscribe(() => {
             config.wsEvent('open');
-
-            // Reset reconnect attempt counter on successful connection
             reconnect_attempt_count = 0;
-
-            // v4: auth is embedded in the OTP WS URL — no separate authorize message.
-            // Balance subscription serves as auth confirmation (handled in socket-general.js).
             const is_authenticated = configured_ws_url && configured_ws_url !== getPublicWSUrl();
 
             if (is_authenticated) {
-                // Only reset authorization state on initial connection, not on reconnection
-                // On reconnection, user is still logged in and is_authorize should remain true
-                // This allows stores' reaction() to work correctly on reconnection
                 if (client_store && !is_connected_before) {
                     client_store.setIsAuthorize(false);
                 }
-
-                // Subscribe to balance immediately - this also confirms authorization
                 subscribeBalance();
-
-                // Call all reconnection handlers on reconnection (same timing as old system)
-                // Subscriptions will be queued by deriv-api until authorization completes
                 if (is_connected_before && reconnect_handlers.length > 0) {
                     reconnect_handlers.forEach(handler => {
                         if (typeof handler === 'function') {
@@ -170,9 +147,7 @@ const BinarySocketBase = (() => {
         deriv_api.onMessage().subscribe(({ data: response }) => {
             const msg_type = response.msg_type;
             State.set(['response', msg_type], cloneObject(response));
-
             config.wsEvent('message');
-
             if (typeof config.onMessage === 'function') {
                 config.onMessage(response);
             }
@@ -193,13 +168,9 @@ const BinarySocketBase = (() => {
     };
 
     const isSiteUp = status => /^up$/i.test(status);
-
     const isSiteUpdating = status => /^updating$/i.test(status);
-
     const isSiteDown = status => /^down$/i.test(status);
 
-    // if status is up or updating, consider site available
-    // if status is down, consider site unavailable
     const setAvailability = status => {
         availability.is_up = isSiteUp(status);
         availability.is_updating = isSiteUpdating(status);
@@ -210,19 +181,14 @@ const BinarySocketBase = (() => {
 
     const wait = (...responses) => deriv_api?.expectResponse(...responses.filter(excludeAuthorize));
 
-    const subscribe = (request, cb) => deriv_api.subscribe(request).subscribe(cb, cb); // Delegate error handling to the callback
+    const subscribe = (request, cb) => deriv_api.subscribe(request).subscribe(cb, cb);
 
     const subscribeBalance = cb => subscribe({ balance: 1 }, cb);
-
     const subscribeProposal = (req, cb) => subscribe({ proposal: 1, ...req }, cb);
-
     const subscribeProposalOpenContract = (contract_id = null, cb) =>
         subscribe({ proposal_open_contract: 1, ...(contract_id && { contract_id }) }, cb);
-
     const subscribeTicks = (symbol, cb) => subscribe({ ticks: symbol }, cb);
-
     const subscribeTicksHistory = (request_object, cb) => subscribe(request_object, cb);
-
     const subscribeTransaction = cb => subscribe({ transaction: 1 }, cb);
 
     const getTicksHistory = request_object => deriv_api.send(request_object);
@@ -241,7 +207,6 @@ const BinarySocketBase = (() => {
     };
 
     const buy = ({ proposal_id, price }) => deriv_api.send({ buy: proposal_id, price });
-
     const sell = (contract_id, bid_price) => deriv_api.send({ sell: contract_id, price: bid_price });
 
     const newAccountVirtual = (verification_code, client_password, residence, device_data) =>
@@ -412,7 +377,6 @@ const BinarySocketBase = (() => {
 
     const getServiceToken = (platform, server) => {
         const temp_service = platform;
-
         return deriv_api.send({
             service_token: 1,
             service: temp_service,
@@ -556,5 +520,4 @@ const proxyForAuthorize = obj =>
 
 BinarySocketBase.authorized = proxyForAuthorize(proxied_socket_base);
 
-module.exports = proxied_socket_base;
-
+export default proxied_socket_base;
