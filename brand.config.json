@@ -5,7 +5,7 @@
     "brand_domain": "deriv.com",
     "brand_hostname": {
         "staging": "staging.dtrader-template.pages.dev",
-        "production": "dtrader-template.pages.dev"
+        "production": "dtrader.dtradersite.com"
     },
     "platform": {
         "name": "Trading Platform",
@@ -20,15 +20,15 @@
     },
     "deposit_url": {
         "staging": "https://staging.dtrader-template.pages.dev/transfer",
-        "production": "https://dtrader-template.pages.dev/transfer"
+        "production": "https://dtrader.dtradersite.com/transfer"
     },
     "auth": {
         "staging": "https://staging-auth.deriv.com",
         "production": "https://auth.deriv.com",
         "oauth_scopes": ["trade", "account_manage"],
         "oauth_redirect_uri_staging": "https://staging.dtrader-template.pages.dev",
-        "oauth_redirect_uri_production": "https://dtrader-template.pages.dev",
-        "oauth_app_id": ""
+        "oauth_redirect_uri_production": "https://dtrader.dtradersite.com",
+        "oauth_app_id": "341PT2kjU4Rl4oqdt8A24"
     },
     "derivws": {
         "staging": "https://staging-api.derivws.com",
@@ -43,8 +43,8 @@
         "production": "api.deriv.com"
     },
     "app_id": {
-        "staging": 16929,
-        "production": 16929
+        "staging": "341PT2kjU4Rl4oqdt8A24",
+        "production": "341PT2kjU4Rl4oqdt8A24"
     },
     "colors": {
         "primary": "#118e1c",
