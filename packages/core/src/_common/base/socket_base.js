@@ -107,7 +107,6 @@ const BinarySocketBase = (() => {
 
             // Add error event listener for connection failures
             binary_socket.addEventListener('error', error_event => {
-                // eslint-disable-next-line no-console
                 console.error('WebSocket error:', error_event);
 
                 // Increment reconnect attempt counter
@@ -245,8 +244,6 @@ const BinarySocketBase = (() => {
 
     const sell = (contract_id, bid_price) => deriv_api.send({ sell: contract_id, price: bid_price });
 
-    // Cashier functionality has been removed
-
     const newAccountVirtual = (verification_code, client_password, residence, device_data) =>
         deriv_api.send({
             new_account_virtual: 1,
@@ -337,8 +334,6 @@ const BinarySocketBase = (() => {
             verification_code,
         });
 
-    // Crypto withdraw functionality has been removed
-
     const cryptoConfig = () =>
         deriv_api.send({
             crypto_config: 1,
@@ -391,7 +386,6 @@ const BinarySocketBase = (() => {
             limit,
         });
 
-    // P2P functionality has been removed
     const accountStatistics = () => deriv_api.send({ account_statistics: 1 });
 
     const tradingServers = platform => deriv_api.send({ platform, trading_servers: 1 });
@@ -437,12 +431,8 @@ const BinarySocketBase = (() => {
         hasReadyState,
         isSiteDown,
         isSiteUpdating,
-        clear: () => {
-            // do nothing.
-        },
-        sendBuffered: () => {
-            // do nothing.
-        },
+        clear: () => {},
+        sendBuffered: () => {},
         getSocket: () => binary_socket,
         get: () => deriv_api,
         getAvailability: () => availability,
@@ -450,20 +440,17 @@ const BinarySocketBase = (() => {
             config.onDisconnect = onDisconnect;
         },
         setOnReconnect: onReconnect => {
-            // Add handler to array if it's not already there
             if (typeof onReconnect === 'function' && !reconnect_handlers.includes(onReconnect)) {
                 reconnect_handlers.push(onReconnect);
             }
         },
         removeOnReconnect: onReconnect => {
-            // If a specific handler is provided, remove only that one
             if (typeof onReconnect === 'function') {
                 const index = reconnect_handlers.indexOf(onReconnect);
                 if (index > -1) {
                     reconnect_handlers.splice(index, 1);
                 }
             } else {
-                // If no handler provided, clear all handlers (backward compatibility)
                 reconnect_handlers = [];
             }
         },
@@ -558,14 +545,10 @@ const proxyForAuthorize = obj =>
                 return proxyForAuthorize(target[field]);
             }
             return (...args) => {
-                // Wait for balance response instead of authorize (balance serves as auth confirmation).
-                // In v4 the OTP URL embeds auth — balance confirms the session is live.
-                // Access configured_ws_url via the IIFE-exposed getter rather than direct closure reference.
                 const current_ws_url = BinarySocketBase.getWSUrl?.();
                 if (current_ws_url && current_ws_url !== BinarySocketBase.getPublicWSUrl?.()) {
                     return BinarySocketBase?.wait('balance')?.then(() => target[field](...args));
                 }
-                // Not authenticated — execute without waiting
                 return target[field](...args);
             };
         },
