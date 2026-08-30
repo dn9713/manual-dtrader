@@ -12,7 +12,7 @@ const createElement = (tag_name, attributes = {}) => {
         if (attr === 'text') {
             el.textContent = value;
         } else if (attr === 'html') {
-            el.html(value);
+            el.innerHTML = value;
         } else {
             el.setAttribute(attr, value);
         }
@@ -82,7 +82,7 @@ const getRegion = (landing_company_shortcode, residence) => {
     return landing_company_shortcode === 'svg' ? 'row' : 'eu';
 };
 
-module.exports = {
+export default {
     createElement,
     getStaticHash,
     isEuCountry,
@@ -91,3 +91,4 @@ module.exports = {
     isMultipliersOnly,
     getRegion,
 };
+
