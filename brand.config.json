@@ -1,32 +1,32 @@
 {
-    "brand_name": "Trading Platform",
+    "brand_name": "Dtradersite",
     "brand_logo": "brand/platform-logo.svg",
     "brand_logo_dark": "brand/platform-logo.svg",
-    "brand_domain": "deriv.com",
+    "brand_domain": "dtradersite.com",
     "brand_hostname": {
-        "staging": "staging.dtrader-template.pages.dev",
+        "staging": "staging.dtrader.dtradersite.com",
         "production": "dtrader.dtradersite.com"
     },
     "platform": {
         "name": "Trading Platform",
         "description": "A whole new trading experience on a powerful yet easy to use platform.",
         "logo": "brand/platform-logo.svg",
-        "home_url": "https://home.deriv.com/dashboard",
-        "help_centre_url": "https://trade.deriv.com/help-centre"
+        "home_url": "https://dtradersite.com",
+        "help_centre_url": "https://dtradersite.com/help-centre"
     },
     "signup_url": {
-        "production": "https://home.deriv.com/dashboard/signup",
-        "staging": "https://staging-home.deriv.com/dashboard/signup"
+        "production": "https://dtradersite.com/signup",
+        "staging": "https://staging.dtrader.dtradersite.com/signup"
     },
     "deposit_url": {
-        "staging": "https://staging.dtrader-template.pages.dev/transfer",
+        "staging": "https://staging.dtrader.dtradersite.com/transfer",
         "production": "https://dtrader.dtradersite.com/transfer"
     },
     "auth": {
         "staging": "https://staging-auth.deriv.com",
         "production": "https://auth.deriv.com",
         "oauth_scopes": ["trade", "account_manage"],
-        "oauth_redirect_uri_staging": "https://staging.dtrader-template.pages.dev",
+        "oauth_redirect_uri_staging": "https://staging.dtrader.dtradersite.com",
         "oauth_redirect_uri_production": "https://dtrader.dtradersite.com",
         "oauth_app_id": "341PT2kjU4Rl4oqdt8A24"
     },
@@ -43,8 +43,8 @@
         "production": "api.deriv.com"
     },
     "app_id": {
-        "staging": "341PT2kjU4Rl4oqdt8A24",
-        "production": "341PT2kjU4Rl4oqdt8A24"
+        "staging": 76568,
+        "production": 76568
     },
     "colors": {
         "primary": "#118e1c",
@@ -68,3 +68,4 @@
         "language_switcher": false
     }
 }
+
