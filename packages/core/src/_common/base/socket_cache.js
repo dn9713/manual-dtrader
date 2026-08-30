@@ -1,6 +1,6 @@
-const moment = require('moment');
-const { isEmptyObject, getPropertyValue, LocalStore } = require('@deriv/shared');
-const { getStaticHash } = require('_common/utility');
+import moment from 'moment';
+import { isEmptyObject, getPropertyValue, LocalStore } from '@deriv/shared';
+import { getStaticHash } from '_common/utility';
 
 /*
  * Caches WS responses to reduce delay time and number of requests
@@ -134,4 +134,4 @@ const SocketCache = (() => {
     };
 })();
 
-module.exports = SocketCache;
+export default SocketCache;
